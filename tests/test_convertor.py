@@ -1,15 +1,19 @@
 from datetime import date
 
+import pytest
 
-class YahooConvertor:
-    def __init__(self, ticker: str):
-        self._ticker = ticker
-
-    def convert(self, value: float, date: date):
-        return 22.365
+from convertor.yahoo_convertor import YahooConvertor
 
 
-def test_converts_1usd_to_czk():
+@pytest.mark.parametrize(
+    'value,expected',
+    [
+        (1.0, 22.3430),
+        (10, 223.430)
+    ]
+)
+def test_converts_usd_to_czk(value, expected):
     convertor = YahooConvertor(ticker='CZK=X')
-    converted = convertor.convert(1., date(2021, 12, 21))
-    assert converted == 22.3650
+    converted = convertor.convert(value, date(2021, 12, 21))
+    assert converted == pytest.approx(expected, 0.001)
+
