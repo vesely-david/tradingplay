@@ -34,4 +34,5 @@ class YahooConvertor:
         _date_min = (date_ - ten_days).strftime('%Y-%m-%d')
         _date_max = (date_ + ten_days).strftime('%Y-%m-%d')
         prices = yf.download(self._ticker, start=_date_min, end=_date_max)
-        return round(prices.loc[Timestamp(date_), "Close"], 3)
+        close_price = prices.loc[Timestamp(date_), "Close"]
+        return round(close_price, 3)
