@@ -42,3 +42,16 @@ def test_converts_btc_to_usd(value, expected):
     convertor = YahooConvertor(ticker='BTC-USD')
     converted = convertor.convert(value, date(2021, 12, 20))
     assert converted == pytest.approx(expected, 0.001)
+
+
+@pytest.mark.parametrize(
+    'value,expected',
+    [
+        (1.0, 0.50186),
+        (10, 5.0186)
+    ]
+)
+def test_converts_pivx_with_precision(value, expected):
+    convertor = YahooConvertor(ticker='PIVX-USD', precision=5)
+    converted = convertor.convert(value, date(2021, 12, 20))
+    assert converted == pytest.approx(expected, 0.00001)
