@@ -55,3 +55,10 @@ def test_converts_pivx_with_precision(value, expected):
     convertor = YahooConvertor(ticker='PIVX-USD', precision=5)
     converted = convertor.convert(value, date(2021, 12, 20))
     assert converted == pytest.approx(expected, 0.00001)
+
+
+def test_use_closest_price_when_date_is_missing():
+    convertor = YahooConvertor(ticker='CZK=X')
+    converted = convertor.convert(1, date(2019, 7, 14))
+    expected = convertor.convert(1, date(2019, 7, 15))
+    assert converted == expected
