@@ -1,6 +1,6 @@
-from datetime import date, timedelta
+from datetime import date
 
-from pandas import Timestamp
+from pandas import Timestamp, Series
 import yfinance as yf
 
 
@@ -24,6 +24,7 @@ class YahooConvertor:
         self._ticker = ticker
         self._inverse = inverse
         self._precison = precision
+        self._prices = yf.download(self._ticker)
 
     def convert(self, value: float, date_: date):
         price = self._find_price(date_)
@@ -34,9 +35,11 @@ class YahooConvertor:
             return value * price
 
     def _find_price(self, date_: date):
-        ten_days = timedelta(days=10)
-        _date_min = (date_ - ten_days).strftime('%Y-%m-%d')
-        _date_max = (date_ + ten_days).strftime('%Y-%m-%d')
-        prices = yf.download(self._ticker, start=_date_min, end=_date_max)
-        close_price = prices.loc[Timestamp(date_), "Close"]
+        ts = Timestamp(date_)
+        if ts not in self._prices.index:
+            diffs = Series(self._prices.index - ts).abs()
+            i = diffs.argmin()
+            ts = self._prices.index[i]
+
+        close_price = self._prices.loc[ts, "Close"]
         return round(close_price, self._precison)
